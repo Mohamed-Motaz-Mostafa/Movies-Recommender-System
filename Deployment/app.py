@@ -3,6 +3,28 @@ import requests
 import pandas as pd
 import hashlib
 import pickle
+import gdown
+import os
+
+# CSV files URLs as raw data from GitHub repository
+moviesCSV = "https://raw.githubusercontent.com/Mohamed-Motaz-Mostafa/Movies-Recommender-Systems/main/Data/movies.csv?token=GHSAT0AAAAAACTODFY3HQBH5HDAACV34ZP4ZT7IR7Q" 
+ratingsCSV = "https://raw.githubusercontent.com/Mohamed-Motaz-Mostafa/Movies-Recommender-Systems/main/Data/ratings.csv?token=GHSAT0AAAAAACTODFY2VEOU5KN32G2DJB4GZT7ITYQ"
+linksCSV = "https://raw.githubusercontent.com/Mohamed-Motaz-Mostafa/Movies-Recommender-Systems/main/Data/links.csv?token=GHSAT0AAAAAACTODFY2NHSS473VPAUA2YVSZT7IUSQ"
+
+# the folloing code is used to download the similarity matrix from google drive if not exist
+file_url = 'https://drive.google.com/file/d/1-1bpusE96_Hh0rUxU7YmBo6RiwYLQGVy/view?usp=sharing'
+output_path = 'Models/similarity_matrix.pkl'
+
+@st.cache_data
+def download_model_from_google_drive(file_url, output_path):
+    gdown.download(file_url, output_path, quiet=False)
+    
+
+# # Check if the file already exists
+if not os.path.exists(output_path):
+    print("Downloading the similarity matrix from Googlr Drive...")
+    download_model_from_google_drive(file_url, output_path)
+
 
 # Set page configuration
 st.set_page_config(page_title="Movie Recommendation", page_icon="🎬", layout="wide")
@@ -117,19 +139,18 @@ def print_movie_details(movie):
 
 
 
-
 # Function to load data
 @st.cache_data
 def load_data():
-    movies_df = pd.read_csv(r"D:\Study\ITI\Recommender Systems\Final\item\movies.csv")
-    ratings_df = pd.read_csv(r"D:\Study\ITI\Recommender Systems\Final\item\ratings.csv")
-    links_df = pd.read_csv(r"D:\Study\ITI\Recommender Systems\Final\item\links.csv")
+    movies_df = pd.read_csv(moviesCSV)
+    ratings_df = pd.read_csv(ratingsCSV)
+    links_df = pd.read_csv(linksCSV)
     return movies_df, ratings_df, links_df
 
 # Function to load similarity matrix
 @st.cache_data
 def load_similarity_matrix():
-    with open(r'D:\Study\ITI\Recommender Systems\Final\item\similarity_matrix.pkl', 'rb') as f:
+    with open('Models/similarity_matrix.pkl', 'rb') as f:
         similarity_df = pickle.load(f)
     return similarity_df
 
