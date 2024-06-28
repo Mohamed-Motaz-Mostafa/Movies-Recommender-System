@@ -7,9 +7,9 @@ import gdown
 import os
 
 # CSV files URLs as raw data from GitHub repository
-moviesCSV = "https://raw.githubusercontent.com/Mohamed-Motaz-Mostafa/Movies-Recommender-Systems/main/Data/movies.csv?token=GHSAT0AAAAAACTODFY3HQBH5HDAACV34ZP4ZT7IR7Q" 
-ratingsCSV = "https://raw.githubusercontent.com/Mohamed-Motaz-Mostafa/Movies-Recommender-Systems/main/Data/ratings.csv?token=GHSAT0AAAAAACTODFY2VEOU5KN32G2DJB4GZT7ITYQ"
-linksCSV = "https://raw.githubusercontent.com/Mohamed-Motaz-Mostafa/Movies-Recommender-Systems/main/Data/links.csv?token=GHSAT0AAAAAACTODFY2NHSS473VPAUA2YVSZT7IUSQ"
+moviesCSV = "https://raw.githubusercontent.com/Mohamed-Motaz-Mostafa/Movies-Recommender-System/main/Data/movies.csv?token=GHSAT0AAAAAACTODFY3DY4JKQVQFBL5RDV4ZT7KF5A" 
+ratingsCSV = "https://raw.githubusercontent.com/Mohamed-Motaz-Mostafa/Movies-Recommender-System/main/Data/ratings.csv?token=GHSAT0AAAAAACTODFY2JIY6UAHMJ2V43HT6ZT7KGNA"
+linksCSV = "https://raw.githubusercontent.com/Mohamed-Motaz-Mostafa/Movies-Recommender-System/main/Data/links.csv?token=GHSAT0AAAAAACTODFY2R32QAQGOTZTYIAHGZT7KG5Q"
 
 # the folloing code is used to download the similarity matrix from google drive if not exist
 file_url = 'https://drive.google.com/file/d/1-1bpusE96_Hh0rUxU7YmBo6RiwYLQGVy/view?usp=sharing'
