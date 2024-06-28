@@ -351,15 +351,27 @@ def main():
                         st.write(f"Movie details for '{movie_title}' not found.")
             else:
                 st.sidebar.error("Invalid email or password")
+
     elif choice == "Movie Similarity":
-        st.title("Find Similar Movies")
-        
+        num_cols = 2
+        cols = st.columns(num_cols)
         
         # Movie similarity search
-        selected_movie = st.selectbox("Type or select a movie from the dropdown", movies_df['title'].unique())
-        k = st.slider("Select the number of recommendations (k)", min_value=1, max_value=50, value=5)
-        
-        if st.button("Find Similar Movies"):
+        with cols[0]:
+            st.title("Find Similar Movies")
+            selected_movie = st.selectbox("Type or select a movie from the dropdown", movies_df['title'].unique())
+            k = st.slider("Select the number of recommendations (k)", min_value=1, max_value=50, value=5)
+            button = st.button("Find Similar Movies")
+        with cols[1]:
+            st.title("Choosen Movie Details:")
+            if selected_movie:
+                correct_Name = selected_movie[:-7]
+                movie = fetch_movie_details(correct_Name)
+                if movie['Response'] == 'True':
+                    display_movie_details(movie)
+                else:
+                    st.write(f"Movie details for '{selected_movie}' not found.")
+        if button:
             st.write("The rating bar here is token from our dataset and it's between 0 and 5.")
             if selected_movie:
                 recommendations = recommend(selected_movie, similarity_df, movies_df, ratings_df, links_df, k)
