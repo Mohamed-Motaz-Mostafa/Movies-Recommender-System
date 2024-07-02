@@ -1,1 +1,3 @@
 Models/similarity_matrix.pkl
+Models/Item_based_matrix.pkl
+Deployment/__pycache__/
