@@ -84,7 +84,13 @@ def get_user_recommendation(DataBase, Matrix,user_id,l=10):
     return recommendations
 
 
-
+def get_recommendation_item(dataBase,matrix, movie_name, n=10):
+  similar_scores = matrix[movie_name]
+  similar_scores = similar_scores.sort_values(ascending=False)
+  
+  # only return movies with more than 100 ratings
+  similar_scores = similar_scores[similar_scores.index.isin(dataBase[dataBase['number_of_ratings'] > 100].index)][:n]
+  return similar_scores
 
 
 if __name__ == '__main__':

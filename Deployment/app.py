@@ -4,7 +4,7 @@ import pandas as pd
 import pickle
 import gdown
 import os
-from Helpers import get_user_recommendation , train_model , get_user_recommendation_XGBoost
+from Helpers import get_user_recommendation , train_model , get_user_recommendation_XGBoost ,get_recommendation_item
 
 
 # Set page configuration
@@ -125,18 +125,24 @@ st.markdown(
 
 
 
-
 # CSV files URLs as raw data from GitHub repository
-moviesCSV = r"D:\Study\ITI\Recommender Systems\Final\Movies-Recommender-System\Data\movies.csv" 
-ratingsCSV = r"D:\Study\ITI\Recommender Systems\Final\Movies-Recommender-System\Data\ratings.csv"
-linksCSV = r"D:\Study\ITI\Recommender Systems\Final\Movies-Recommender-System\Data\links.csv"
-DataBaseCSV = r"D:\Study\ITI\Recommender Systems\Final\Movies-Recommender-System\Data\XGBoost_database.csv"
+moviesCSV = "Data/movies.csv" 
+ratingsCSV = "Data/ratings.csv"
+linksCSV = "Data/links.csv"
+
+
+
+
+# the folloing code is used to download the similarity matrix from google drive if not exist
 
 # the folloing code is used to download the similarity matrix from google drive if not exist
 file_url = 'https://drive.google.com/uc?id=1-1bpusE96_Hh0rUxU7YmBo6RiwYLQGVy'
-output_path = r'D:\Study\ITI\Recommender Systems\Final\Movies-Recommender-System\Models\similarity_matrix.pkl'
+DataBaseCSV = "https://drive.google.com/uc?id=11Soimwc1uKS5VGy_QROifwkdIzl8MZaV"
+output_path = 'Models/similarity_matrix.pkl'
+output_path_DataBase = 'Data/XGBoost_database.csv'
 
-user_matrix_path = r"D:\Study\ITI\Recommender Systems\Final\Movies-Recommender-System\Models\user_based_matrix.pkl"
+
+user_matrix_path = 'Models/User_based_matrix.pkl'
 
 @st.cache_data
 def download_model_from_google_drive(file_url, output_path):
@@ -149,6 +155,8 @@ if not os.path.exists(output_path):
     # change file permission
     # os.chmod('Models/', 0o777)
     download_model_from_google_drive(file_url, output_path)
+    download_model_from_google_drive(DataBaseCSV, output_path_DataBase)
+
     print("Download completed......")
 
 
@@ -320,7 +328,7 @@ def load_data():
     movies_df = pd.read_csv(moviesCSV)
     ratings_df = pd.read_csv(ratingsCSV)
     links_df = pd.read_csv(linksCSV)
-    DataBase = pd.read_csv(DataBaseCSV)
+    DataBase = pd.read_csv(output_path_DataBase)
     return movies_df, ratings_df, links_df , DataBase
 
 # Function to load similarity matrix
@@ -367,16 +375,19 @@ def recommend(movie, similarity_df, movies_df, ratings_df, links_df, k=5):
     try:
         index = movies_df[movies_df['title'] == movie].index[0]
 
-
-
         distances = sorted(list(enumerate(similarity_df.iloc[index])), reverse=True, key=lambda x: x[1])
 
         recommended_movies = []
-        for i in distances[1:k+1]:
+        for i in distances[1:]:
             movie_id = movies_df.iloc[i[0]]['movieId']
-            movie_details = get_movie_details(movie_id, movies_df, ratings_df, links_df)
-            if movie_details:
-                recommended_movies.append(movie_details)
+            num_ratings = ratings_df[ratings_df['movieId'] == movie_id].shape[0]
+            
+            if num_ratings > 100:
+                movie_details = get_movie_details(movie_id, movies_df, ratings_df, links_df)
+                if movie_details:
+                    recommended_movies.append(movie_details)
+                if len(recommended_movies) == k:
+                    break
         return recommended_movies
     except Exception as e:
         st.error(f"Error generating recommendations: {e}")
@@ -404,7 +415,9 @@ def main():
             
         # Login form
         st.sidebar.header("Login")
-        username = int(st.sidebar.text_input("Username"))
+        username = st.sidebar.text_input("Username")
+        if username:
+            username = int(username)
         # password = st.sidebar.text_input("Password", type="password")
         if st.sidebar.button("Login"):
             if login(username, 'password'):
@@ -452,6 +465,7 @@ def main():
         if button:
             st.write("The rating bar here is token from our dataset and it's between 0 and 5.")
             if selected_movie:
+                # recommendations = get_recommendation_item(DB_df, similarity_df, selected_movie , k)
                 recommendations = recommend(selected_movie, similarity_df, movies_df, ratings_df, links_df, k)
                 if recommendations:
                     st.write(f"Similar movies to '{selected_movie}':")
