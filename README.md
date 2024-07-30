@@ -85,6 +85,7 @@ Select a movie to find similar titles.<br>
 User-Based Similarity Page:
 Log in as a random user to see personalized recommendations.<br>
 # 👥 Team
+Mohamed Motaz <br>
 Amina Mohamed <br>
 Asmaa Ali <br>
 Naira Mohamed <br>
